@@ -5,13 +5,15 @@ import com.crud.project.entities.Client;
 import com.crud.project.exceptions.DatabaseException;
 import com.crud.project.exceptions.ResourceNotFoundException;
 import com.crud.project.repositories.ClientRepository;
-import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -58,10 +60,10 @@ public class ClientService {
     public void delete(Long id) {
         try{
             repository.deleteById(id);
-        } catch (ResourceNotFoundException e) {
-            System.out.println("Id not found: " + id);
-        } catch (DatabaseException e) {
-            System.out.println("Integrity violation");
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException("Id not found: " + id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Integrity violation");
         }
     }
 
