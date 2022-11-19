@@ -32,7 +32,7 @@ public class ResourceExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         err.setTimeStamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Resource not found");
+        err.setError("Database integrity violation");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
