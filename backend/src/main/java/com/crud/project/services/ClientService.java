@@ -9,11 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -24,8 +23,8 @@ public class ClientService {
     ClientRepository repository;
 
     @Transactional(readOnly = true)
-    public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
-        Page<Client> list = repository.findAll(pageRequest);
+    public Page<ClientDTO> findAllPaged(Pageable pageable) {
+        Page<Client> list = repository.findAll(pageable);
         return list.map(ClientDTO::new);
     }
 
@@ -47,7 +46,6 @@ public class ClientService {
     public ClientDTO update(Long id, ClientDTO dto) {
         try {
             Client entity = repository.getReferenceById(id);
-            dto.setId(id);
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new ClientDTO(entity);
@@ -68,7 +66,6 @@ public class ClientService {
     }
 
     public void copyDtoToEntity(ClientDTO dto, Client entity) {
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setCpf(dto.getCpf());
         entity.setIncome(dto.getIncome());
